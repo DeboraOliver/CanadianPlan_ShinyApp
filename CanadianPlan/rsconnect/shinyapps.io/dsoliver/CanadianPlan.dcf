@@ -1,0 +1,12 @@
+name: CanadianPlan
+title: CanadianPlan
+username:
+account: dsoliver
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1533931
+bundleId: 2622569
+url: https://dsoliver.shinyapps.io/CanadianPlan/
+when: 1574880523.21122
+asMultiple: FALSE
+asStatic: FALSE
