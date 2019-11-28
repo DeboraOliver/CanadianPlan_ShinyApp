@@ -69,6 +69,7 @@ dashboardPage(
     textInput(
       inputId = "savings",
       label = "Sua poupança em BRL",
+      value = "10000",
       width = NULL
     ),
     
@@ -100,8 +101,11 @@ dashboardPage(
     ),
     #submitButton("Forecast"),
     #br(),
-    # img(src = "Canada_Flag.png", height = 144, width = 144),
-    img(src = "Canada_Flag.png"),
+    div(tags$img(style="height:144px; width:180px",
+            src = "https://cdn.countryflags.com/thumbs/canada/flag-heart-3d-250.png"),
+       style="text=-align: center;"),
+            
+    #img(src = "Canada_flag.jfif"),
     br(),
     br(),
     "Developed by ",
@@ -122,16 +126,16 @@ dashboardPage(
     #title = "Sua cidade preferida",
     #id = "tabset1", height = "250px",
     tabPanel(
-      "Sua cidade em relação as demais",
+      "Sua cidade",
       textOutput("Esta aba mostra a comparação da sua cidade com a média canadense"),
       fluidRow(column(
-        width = 10,
+        width = 10, 
         offset = 0,
         box(
           title = "Principais Gastos",
           #background = "red",
           status = "danger",
-          #use "primary" for blue title or sucess(green)/info(light blue)/warning(light orange)
+                    #use "primary" for blue title or sucess(green)/info(light blue)/warning(light orange)
           solidHeader = TRUE,
           collapsible = TRUE,
           plotOutput(outputId = "pie")
@@ -167,34 +171,49 @@ dashboardPage(
       ))
     ),
     
-    tabPanel("Comparar várias cidades"
-             #          textOutput("Esta aba compara suas 03 cidades favoritas"),
-             #          fluidRow(
-             #            column(width = 10, offset = 0,
-             #          box(
-             #            title = "Aluguel na sua cidade",
-             #            #background = "red",
-             #            status = "danger",
-             #            solidHeader = TRUE, collapsible = TRUE,
-             #            plotOutput(outputId = "rent"))
-             #
-             # ))
-          
-             ),
-             
+     #tabPanel("Comparar várias cidades"
+              #          textOutput("Esta aba compara suas 03 cidades favoritas"),
+              #          fluidRow(
+              #            column(width = 10, offset = 0,
+              #          box(
+              #            title = "Aluguel na sua cidade",
+              #            #background = "red",
+              #            status = "danger",
+              #            solidHeader = TRUE, collapsible = TRUE,
+              #            plotOutput(outputId = "rent"))
+              
+              # ))
+    
+             # ),
+
     tabPanel("Sua Poupança",
                textOutput("Esta aba é sobre suas finanças"),
                fluidRow(column(
                  width = 10,
                  offset = 0,
-                 box(
-                   title = "Sua Poupança em CAD",
-                   #background = "red",
-                   status = "danger",
-                   solidHeader = TRUE,
-                   collapsible = TRUE,
-                   textOutput(outputId = "savings")
-                 )
+                 # box(
+                 #   title = "Sua Poupança em CAD",
+                 #   background = "red",
+                 #   status = "danger",
+                 #   solidHeader = TRUE,
+                 #   collapsible = TRUE,
+                 #   textOutput(outputId = "savings")
+                 # ),
+                 
+                 #https://stackoverflow.com/questions/33145029/currency-signs-in-valuebox-shinydashboard-shiny
+                 
+                 valueBox(value = paste0(sprintf("%.2f", 3.20), " CAD$"), icon = icon("dollar"),
+                          subtitle = "cotação do dia 27/11/2019", 
+                          color = "green"),
+                 
+                 infoBoxOutput("savings"),
+                 
+                 infoBoxOutput("monthly"),
+                 
+                 infoBoxOutput("annualy"),
+                 
+                 infoBoxOutput("work")
+                 
                ))
              )
     ))
