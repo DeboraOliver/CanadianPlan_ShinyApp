@@ -99,8 +99,11 @@ dashboardPage(
       multiple = TRUE,
       selected = c("Calgary", "Halifax")
     ),
-    #submitButton("Forecast"),
-    #br(),
+    br(),
+    
+    submitButton("Vamos", icon("refresh")),
+    br(),
+    br(),
     div(tags$img(style="height:144px; width:180px",
             src = "https://cdn.countryflags.com/thumbs/canada/flag-heart-3d-250.png"),
        style="text=-align: center;"),
@@ -109,12 +112,12 @@ dashboardPage(
     br(),
     br(),
     "Developed by ",
-    span("Débora Oliveira", style = "color:blue")
-    #br(),
+    span("Débora Oliveira", style = "color:blue"),
+    br(),
     # h6("Data sources: ",
     #    a(href = "https://www.gov.uk/government/statistics/bis-prices-and-cost-indices", "cost"),
     # ),
-    # h6("Code: ", a(href = "https://github.com/DeboraOliver/CanadianPlan_ShinyApp.git", "Github"))
+     h6("Code: ", a(href = "https://github.com/DeboraOliver/CanadianPlan_ShinyApp.git", "Github"))
     #
   ),
   
