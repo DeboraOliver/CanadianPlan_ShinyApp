@@ -100,8 +100,8 @@ dashboardPage(
       selected = c("Calgary", "Halifax")
     ),
     br(),
-    
-    submitButton("Vamos", icon("refresh")),
+    div(style="display:inline-block;margin-left: 52%;padding-bottom: 10px;",
+    submitButton("Vamos", icon("refresh"))),
     br(),
     br(),
     div(tags$img(style="height:144px; width:180px",
@@ -163,31 +163,33 @@ dashboardPage(
         )
         
         # box(
-        #   title = "Custo de ",
-        #   #background = "red",
-        #   status = "danger",
-        #   solidHeader = TRUE, collapsible = TRUE,
-        #   plotOutput(outputId = "cost"))
-        
+        #    title = "Custo de vida",
+        #    #background = "red",
+        #    status = "danger",
+        #    solidHeader = TRUE, collapsible = TRUE,
+        #   plotOutput(outputId = "cost")
+        #   #textOutput(outputId = "cost")
+        #   )
+
         
         
       ))
     ),
     
-     #tabPanel("Comparar várias cidades"
+     tabPanel("Comparar cidades",
               #          textOutput("Esta aba compara suas 03 cidades favoritas"),
               #          fluidRow(
               #            column(width = 10, offset = 0,
-              #          box(
-              #            title = "Aluguel na sua cidade",
-              #            #background = "red",
-              #            status = "danger",
-              #            solidHeader = TRUE, collapsible = TRUE,
-              #            plotOutput(outputId = "rent"))
+                        box(
+                          title = "suas cidades",
+                          #background = "red",
+                          status = "danger",
+                          solidHeader = TRUE, collapsible = TRUE,
+                          verbatimTextOutput(outputId = "expensive"))
               
-              # ))
+               #))
     
-             # ),
+              ),
 
     tabPanel("Sua Poupança",
                textOutput("Esta aba é sobre suas finanças"),

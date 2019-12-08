@@ -13,11 +13,14 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
+library(reshape)
 
 rm(list=ls())
 #controls the layout and appearance of app
 
 cities <- read.csv("trip_canada.csv")
+#cities <- read_csv("CanadianPlan/trip_canada.csv")
+
 
 cities <- cities %>% 
   mutate_all(function(x) gsub('\\$','',x)) %>%
@@ -34,52 +37,37 @@ wage <- cities %>% slice(68) %>% select(-X) %>%
 wage <- wage %>% mutate(Mean = rowMeans(wage)) %>%
   mutate(Max = max(wage))
 
-#creating a new data.frame with canadian average
 
-# average_canadian <- resume %>% 
-#   mutate(Mean = rowMeans(wage)) %>%
-#   mutate(Max = max(wage)
-#   )
 
-#rent
-rent <- cities %>% slice(57:60) %>%
-  rename(Rent = X) 
-rownames(rent) <- rent$Rent
+#RENT IN YOUR MAIN CITY
+rent <- cities %>% slice(57:60) %>%  select(-X) 
+  
 rent[,1:18] <- rent %>% mutate_if(is.character, as.numeric)
-rent$Rent <- rownames(rent)
-rownames(rent) <- NULL 
-# 
-# rent_mean <- rent %>% select(-Rent) #types of rent
-# 
-# rent[] <- lapply(rent, as.numeric)
-# 
-# # rent_mean <- as.data.frame(rent_mean)
-# # rent_mean <- colMeans(rent_mean)
-# # rent_mean$city <- rownames(rent_mean)
-# 
-#  #Canadian_avg_rent <- rowMeans(rent_mean) #Average canadian rent
-#  Avg_by_prov <- as.data.frame(Avg_by_prov)
-#  Avg_by_prov <- colMeans(rent_mean)   #Average rent by province
-#  
-#  Avg_by_prov$city <- rownames(Avg_by_prov)
-#  
-#  Avg_by_prov$city <- c("Fredericton","Halifax","Winnipeg","Moncton","Ottawa","Saint.John","Saskatoon","Calgary","Brandon","Victoria","Edmonton","Kitchener","Waterloo","Mississauga","Guelph","Regina","Hamilton")
-# rownames(Avg_by_prov) <- NULL
-#   
-# #comparing life quality
-# #
-# new_rowname <- c("Alimentação", "Transporte", "Água&Eletricidade", "Aluguel")
-#  lifecosts <- cities %>% slice(73:76) %>% 
-#    select(-X) %>%  
-#    mutate_if(is.character, as.numeric)
-#  rownames(lifecosts) <- new_rowname
-#  
-#  spending<- as.data.frame(spending)
-#  #try<-c("Brandon", "Halifax")
-#  #spending <- lifecosts["Aluguel",]
-#  #spending$teste <- rownames(spending)
-#  #rownames(spending) <- NULL
-#  
+rent$Rent <- c("Ap 1 bedroom in Centre", "Ap 1 bedroom out of Centre", "Ap 3 bedrooms in Centre", "Ap 3 bedrooms out of Centre")
+
+
+#
+#comparing life quality
+#
+conditions <- c("Alimentação", "Transporte", "Água&Eletricidade", "Aluguel")
+ lifecosts <- cities %>% slice(73:76) %>%
+   select(-X) 
+    lifecosts <-  lifecosts %>% mutate_if(is.character, as.numeric)
+   lifecosts$Spend <- conditions 
+  
+  
+  
+#CUSTO DE VIDA NAS CIDADES ESCOLHIDAS
+
+    expensive <- cities %>% slice(77) %>% 
+      mutate_all(function(x) gsub('\\$','',x)) %>%
+      mutate_all(function(x) gsub(',','',x)) %>% 
+      select(-X)
+    
+    expensive <-  expensive %>% mutate_if(is.character, as.numeric)
+    expensive$Gastos <- "Gastos por mes" 
+    
+    
 #  
 # #head(resume)
 #TAB SAVINGS
@@ -111,24 +99,44 @@ shinyServer(function(input, output) {
     
     barplot(height=vector_bar, names=c("Máximo",input$n, "Média"), 
             col= coul,
-            xlab = "teste",
+            xlab = "",
             ylab="values", 
             main="Salário Minimo por hora (CAD)", 
             ylim=c(0,20))
   })
   # 
-  # output$cost <- renderPlot ({
-  #   # try<- as.numeric()
-  #   # try<-c(lifecosts[input$thing,input$n], lifecosts[input$thing,input$compare])
-  #   # spending <- lifecosts[input$thing,try]
-  #   # 
-  #   as.data.frame(lifecosts)
-  #   ggplot(data=lifecosts, aes(x=input$thing, y=input$compare)) +
-  #     geom_bar(stat="identity", fill="#f68060", alpha=.6, width=.4) +
-  #     coord_flip() +
-  #     xlab("") +
-  #    theme_bw()
+  # MOST EXPENSIVE CITY
+  # 
+  #  dataframe <- reactive({
+  #    expensive_cities<- as.numeric() 
+  #    expensive_cities<- c(expensive[,input$compare[1]], expensive[,input$compare[2]], expensive[,input$n])
+  #    # 
   # })
+   output$expensive <- renderPlot ({
+     
+    expensive_cities<- as.numeric()
+   expensive_cities<- c(expensive[,input$compare[1]], expensive[,input$compare[2]], expensive[,input$n])
+  #
+   coul <- brewer.pal(3, "Set2")
+   # 
+   # 
+   # barplot(height=dataframe, names =  c(input$compare[1],input$compare[2], input$n),
+   #          col= coul,
+   #          xlab = "",
+   #          ylab="values", 
+   #          main="Gastos por mês", 
+   #          ylim=c(800,1600))
+   #print(input$compare[2])
+   
+   ggplot(data=expensive, aes(x=Gastos, y=expensive_citites)) +
+     geom_bar(stat="identity", fill="#f68060", alpha=.6, width=.4) +
+     coord_flip() +
+     xlab("") +
+     theme_bw()
+   
+  
+  
+   })
   
   #rent in your main city
   output$rent <- renderPlot ({
@@ -144,6 +152,17 @@ shinyServer(function(input, output) {
     
   })
   
+  # output$cost <- renderPlot ({
+  #    
+  #    try_values<- lifecosts[,input$compare]
+  #    try_cities <- rep(c(input$compare),4)
+  #    conditions_1 <- rep(c("Alimentação, Transporte, Água&Eletricidade, Aluguel"),size(input$compare))
+  #   lifecosts_resume <- data.frame(try_cities,conditions,try_values)
+  #   # 
+  #   # #as.data.frame(lifecosts)
+  #    ggplot(lifecosts_resume, aes(fill=conditions, y=try_values, x=try_cities)) + 
+  #      geom_bar(position="stack", stat="identity")
+  # })
   
   
   #TAB SAVINGS
