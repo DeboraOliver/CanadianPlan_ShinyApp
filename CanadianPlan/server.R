@@ -47,16 +47,6 @@ rent$Rent <- c("Ap 1 bedroom in Centre", "Ap 1 bedroom out of Centre", "Ap 3 bed
 
 
 #
-#comparing life quality
-#
-conditions <- c("Alimentação", "Transporte", "Água&Eletricidade", "Aluguel")
- lifecosts <- cities %>% slice(73:76) %>%
-   select(-X) 
-    lifecosts <-  lifecosts %>% mutate_if(is.character, as.numeric)
-   lifecosts$Spend <- conditions 
-  
-  
-  
 #CUSTO DE VIDA NAS CIDADES ESCOLHIDAS
 
     expensive <- cities %>% slice(77) %>% 
@@ -67,6 +57,21 @@ conditions <- c("Alimentação", "Transporte", "Água&Eletricidade", "Aluguel")
     expensive <-  expensive %>% mutate_if(is.character, as.numeric)
     expensive$Gastos <- "Gastos por mes" 
     
+    #a new dataset with only selected cities
+    cidades <- vector(mode = "character", length = 0)
+    gastos <- vector(mode = "numeric", length = 0)
+    
+    #comparing life quality
+    #
+    names <- c("Alimentação", "Transporte", "Água&Eletricidade", "Aluguel")
+    lifecosts <- cities %>% slice(73:76) %>%
+      select(-X) 
+    lifecosts <-  lifecosts %>% mutate_if(is.character, as.numeric)
+    rownames(lifecosts) <- names #just as reference
+    
+    cities_names <- vector(mode = "character", length = 0)
+    condicoes <- vector(mode = "character", length = 0)
+    valores <- vector(mode = "numeric", length = 0)
     
 #  
 # #head(resume)
@@ -106,35 +111,32 @@ shinyServer(function(input, output) {
   })
   # 
   # MOST EXPENSIVE CITY
-  # 
-  #  dataframe <- reactive({
-  #    expensive_cities<- as.numeric() 
-  #    expensive_cities<- c(expensive[,input$compare[1]], expensive[,input$compare[2]], expensive[,input$n])
-  #    # 
-  # })
+  
    output$expensive <- renderPlot ({
      
-    expensive_cities<- as.numeric()
-   expensive_cities<- c(expensive[,input$compare[1]], expensive[,input$compare[2]], expensive[,input$n])
-  #
-   coul <- brewer.pal(3, "Set2")
-   # 
-   # 
-   # barplot(height=dataframe, names =  c(input$compare[1],input$compare[2], input$n),
-   #          col= coul,
-   #          xlab = "",
-   #          ylab="values", 
-   #          main="Gastos por mês", 
-   #          ylim=c(800,1600))
-   #print(input$compare[2])
+     vector_city <-as.character(input$compare) #entries
+     
+     for(i in 1:length(vector_city)) {
+       
+      # print(i)
+       nome_cidade <- vector_city[i]
+       
+       cidades <- append(cidades, paste(nome_cidade)) #element 1
+       gastos <- append(gastos, paste(expensive[,vector_city[i]]))
+     }
+     
+     gastos_cidade <- data.frame(cidades, gastos)
+     
    
-   ggplot(data=expensive, aes(x=Gastos, y=expensive_citites)) +
+   ggplot(data=gastos_cidade, aes(x=cidades, y=gastos)) +
+     #geom_segment( aes(xend=cidades, yend=0)) +
+     #geom_point( size=4, color="orange") +
      geom_bar(stat="identity", fill="#f68060", alpha=.6, width=.4) +
      coord_flip() +
      xlab("") +
      theme_bw()
-   
-  
+
+   # 
   
    })
   
@@ -152,22 +154,42 @@ shinyServer(function(input, output) {
     
   })
   
-  # output$cost <- renderPlot ({
-  #    
-  #    try_values<- lifecosts[,input$compare]
-  #    try_cities <- rep(c(input$compare),4)
-  #    conditions_1 <- rep(c("Alimentação, Transporte, Água&Eletricidade, Aluguel"),size(input$compare))
-  #   lifecosts_resume <- data.frame(try_cities,conditions,try_values)
-  #   # 
-  #   # #as.data.frame(lifecosts)
-  #    ggplot(lifecosts_resume, aes(fill=conditions, y=try_values, x=try_cities)) + 
-  #      geom_bar(position="stack", stat="identity")
-  # })
+  output$cost <- renderPlot ({
+
+    comparing <- as.character(input$compare)
+    
+    for(i in 1:length(comparing)){
+      
+      name_vector <- comparing[i]
+      
+      cities_names <- append(cities_names, paste(name_vector))
+      
+      vector_condition <- input$thing
+      
+      for(i in 1:length(vector_condition)){
+        
+        conditional <- vector_condition[i]
+        print(conditional)
+        
+        condicoes <- append(condicoes, paste(vector_condition[i]))
+        valores <- append(valores, lifecosts[conditional,name_vector])
+      }
+    }
+      costs_compare <- data.frame(cities_names,condicoes,valores)
+      print(costs_compare)
+      
+      ggplot(costs_compare, aes(fill=condicoes, y=valores, x=cities_names)) + 
+        geom_bar(position="fill", stat="identity") +
+        xlab("") +
+        ylab("Gastos em porcentagem")+
+        theme_bw()
+         
+     })
   
   
   #TAB SAVINGS
   #
-  output$savings <- renderInfoBox({
+  output$money <- renderInfoBox({
 
   saved <- as.numeric(paste(input$savings))
 
@@ -212,9 +234,9 @@ shinyServer(function(input, output) {
   })
 
 
-  # output$savings <- renderText ({
+   output$savings <- renderText ({
   #   
-  #   
+     teste_1 <- max(gastos_cidade)
   #   
   #   month<- spent_monthly[,input$n]
   #   
@@ -224,12 +246,11 @@ shinyServer(function(input, output) {
   #   
   #   survival_month <- round((Total_saved_CAD/month),0)
   #   
-  #   paste("Com o dólar CAD a R$ 3.2 você tem em CAD", Total_saved_CAD,". Em ", input$n, 
-  #         "você precisará de", month, "por mês. O seu valor de poupança te permite viver por",
-  #         survival_month, "meses em ", input$n, " sem trabalhar.")
+     paste("Seu dinheiro vale mais", teste_1)
   #   
-  # })
+   })
 
 
   
 })
+   

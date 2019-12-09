@@ -46,13 +46,8 @@ dashboardPage(
       )
     ),
     
-    #what to compare
-    radioButtons(
-      inputId = "thing",
-      label = "Comparar",
-      choices = c("Aluguel", "Água&Eletricidade", "Alimentação")
-    ),
     
+    # 
     #family members
     sliderInput(
       inputId = "family",
@@ -63,10 +58,7 @@ dashboardPage(
     ),
     
     #money matters
-    #radioButtons(inputId = "money", label = "Valores em",
-    #                            choices = c("Real (BRL)", "Dólar (CAD)")),
-    #saving
-    textInput(
+        textInput(
       inputId = "savings",
       label = "Sua poupança em BRL",
       value = "10000",
@@ -76,7 +68,7 @@ dashboardPage(
     #comparing diferent cities
     selectInput(
       inputId = "compare",
-      label = "Comparar cidades",
+      label = "Comparar Cidades",
       choices = c(
         "Brandon",
         "Calgary",
@@ -99,6 +91,16 @@ dashboardPage(
       multiple = TRUE,
       selected = c("Calgary", "Halifax")
     ),
+    
+    #what to compare
+    checkboxGroupInput(
+      inputId = "thing",
+      label = "Comparar",
+      choices = c("Alimentação", "Transporte", "Água&Eletricidade", "Aluguel"),
+      selected = c("Alimentação","Água&Eletricidade", "Aluguel")
+        
+    ),
+    
     br(),
     div(style="display:inline-block;margin-left: 52%;padding-bottom: 10px;",
     submitButton("Vamos", icon("refresh"))),
@@ -144,14 +146,14 @@ dashboardPage(
           plotOutput(outputId = "pie")
         ),
         
-        box(
-          title = "Salário Mínimo nesta cidade",
-          #background = "red",
-          status = "danger",
-          solidHeader = TRUE,
-          collapsible = TRUE,
-          plotOutput(outputId = "wage")
-        ),
+        # box(
+        #   title = "Salário Mínimo nesta cidade",
+        #   #background = "red",
+        #   status = "danger",
+        #   solidHeader = TRUE,
+        #   collapsible = TRUE,
+        #   plotOutput(outputId = "wage")
+        # ),
         
         box(
           title = "Aluguel na sua cidade",
@@ -160,18 +162,21 @@ dashboardPage(
           solidHeader = TRUE,
           collapsible = TRUE,
           plotOutput(outputId = "rent")
-        )
+        ),
         
-        # box(
-        #    title = "Custo de vida",
-        #    #background = "red",
-        #    status = "danger",
-        #    solidHeader = TRUE, collapsible = TRUE,
-        #   plotOutput(outputId = "cost")
-        #   #textOutput(outputId = "cost")
-        #   )
+       
 
+        valueBox(value = paste0(sprintf("%.2f", 3.20), " CAD$"), icon = icon("dollar"),
+                 subtitle = "cotação do dia 27/11/2019", 
+                 color = "green"),
         
+        infoBoxOutput("money"),
+        
+        infoBoxOutput("monthly"),
+        
+        infoBoxOutput("annualy"),
+        
+        infoBoxOutput("work")
         
       ))
     ),
@@ -181,46 +186,62 @@ dashboardPage(
               #          fluidRow(
               #            column(width = 10, offset = 0,
                         box(
-                          title = "suas cidades",
+                          title = "Gastos por mês",
                           #background = "red",
                           status = "danger",
                           solidHeader = TRUE, collapsible = TRUE,
-                          verbatimTextOutput(outputId = "expensive"))
+                          plotOutput(outputId = "expensive")),
+              box(
+                title = "Custo de vida",
+                #background = "red",
+                status = "danger",
+                solidHeader = TRUE, collapsible = TRUE,
+                plotOutput(outputId = "cost")
+              )
               
+              # box(
+              #                   title = "",
+              #                   background = "red",
+              #                   status = "danger",
+              #                   solidHeader = TRUE,
+              #                   collapsible = TRUE,
+              #                   verbatimTextOutput(outputId = "savings")
+              #                )
+              # 
                #))
     
-              ),
+              )
 
-    tabPanel("Sua Poupança",
-               textOutput("Esta aba é sobre suas finanças"),
-               fluidRow(column(
-                 width = 10,
-                 offset = 0,
-                 # box(
-                 #   title = "Sua Poupança em CAD",
-                 #   background = "red",
-                 #   status = "danger",
-                 #   solidHeader = TRUE,
-                 #   collapsible = TRUE,
-                 #   textOutput(outputId = "savings")
-                 # ),
-                 
-                 #https://stackoverflow.com/questions/33145029/currency-signs-in-valuebox-shinydashboard-shiny
-                 
-                 valueBox(value = paste0(sprintf("%.2f", 3.20), " CAD$"), icon = icon("dollar"),
-                          subtitle = "cotação do dia 27/11/2019", 
-                          color = "green"),
-                 
-                 infoBoxOutput("savings"),
-                 
-                 infoBoxOutput("monthly"),
-                 
-                 infoBoxOutput("annualy"),
-                 
-                 infoBoxOutput("work")
-                 
-               ))
-             )
+    # tabPanel("Sua Poupança",
+    #            textOutput("Esta aba é sobre suas finanças"),
+    #            fluidRow(column(
+    #              width = 10,
+    #              offset = 0,
+    #              # box(
+    #              #   title = "Sua Poupança em CAD",
+    #              #   background = "red",
+    #              #   status = "danger",
+    #              #   solidHeader = TRUE,
+    #              #   collapsible = TRUE,
+    #              #   textOutput(outputId = "savings")
+    #              # ),
+    #              
+    #              #https://stackoverflow.com/questions/33145029/currency-signs-in-valuebox-shinydashboard-shiny
+    #              
+    #              valueBox(value = paste0(sprintf("%.2f", 3.20), " CAD$"), icon = icon("dollar"),
+    #                       subtitle = "cotação do dia 27/11/2019", 
+    #                       color = "green"),
+    #              
+    #              infoBoxOutput("savings"),
+    #              
+    #              infoBoxOutput("monthly"),
+    #              
+    #              infoBoxOutput("annualy"),
+    #              
+    #              infoBoxOutput("work")
+    #              
+    #            ))
+    #          )
     ))
-  )
+)
   
