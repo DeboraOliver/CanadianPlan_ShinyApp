@@ -57,5 +57,10 @@ This project can be improved in the future:
 - instead of a csv file with data, we could get it all online.
 
 
+# Final Result
+
+https://dsoliver.shinyapps.io/CanadianPlan/
+
+
 
   
